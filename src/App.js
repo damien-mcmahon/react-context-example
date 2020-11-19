@@ -1,23 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import { createContext, useEffect, useRef, useState } from "react";
+
+import PostsCountComponent from './components/PostsCountComponent';
+import PostsListComponent from './components/PostsListComponent';
+
+import { fetchPosts } from './api';
+
+export const PostsContext = createContext([]);
 
 function App() {
+  const [posts, setPosts] = useState([]);
+
+  // fetch the movie data...
+  useEffect(() => {
+    async function getPosts() {
+      const posts = await fetchPosts();
+      setPosts(posts);
+    }
+    //async functions have to be called this way...
+    getPosts();
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <PostsContext.Provider value={posts}>
+        <PostsCountComponent />
+        <PostsListComponent />
+      </PostsContext.Provider>
     </div>
   );
 }
